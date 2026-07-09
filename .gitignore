@@ -10,3 +10,8 @@ wheels/
 .venv
 
 .DS_Store
+.idea
+
+作业1/data/
+作业2/data/
+作业3/data/
