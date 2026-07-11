@@ -30,7 +30,7 @@ class PositionalEncoding(nn.Module):
     使用固定（不可学习）的正余弦编码。
     """
 
-    def __init__(self, d_model, max_len=5000):
+    def __init__(self, d_model, max_len=16384):
         super().__init__()
         pe = torch.zeros(max_len, d_model)
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
