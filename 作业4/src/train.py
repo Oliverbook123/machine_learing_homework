@@ -167,14 +167,16 @@ def train_model(model, train_loader, valid_loader,
         model:       训练好的模型（最优权重）
         best_acc:    最优验证精度
     """
-    from src.config import OUTPUT_DIR
+    from src.config import OUTPUT_DIR, LABEL_SMOOTHING
     save_dir = save_dir or OUTPUT_DIR
     os.makedirs(save_dir, exist_ok=True)
 
     model = model.to(device)
 
     # nn.CrossEntropyLoss: 交叉熵损失（内含 softmax）
-    criterion = nn.CrossEntropyLoss()
+    # 改进: 加入 label_smoothing=0.1，600 类任务中防止过度自信，提升泛化
+    # 旧值: nn.CrossEntropyLoss()（无 label_smoothing）
+    criterion = nn.CrossEntropyLoss(label_smoothing=LABEL_SMOOTHING)
 
     # AdamW: Adam + 解耦权重衰减
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate,

@@ -7,7 +7,7 @@
     uv run python main.py
 
 等级说明:
-  - Simple: 基础 Transformer (d_model=80, nhead=2, 2层)
+  - Simple: 基础 Transformer (d_model=128, nhead=4, 2层)
   - Medium: 调参 Transformer (nhead=4, 4层) + 自注意力池化
   - Hard:   Conformer + 自注意力池化
 
@@ -59,9 +59,10 @@ def main():
     print("[1/3] Simple 等级: 基础 Transformer")
     print("=" * 60)
 
-    # 与参考代码一致: d_model=80, nhead=2, dim_ff=256, 2层
+    # 改进: d_model 80→128, nhead 2→4, dim_ff 256→512, 加位置编码
+    # 旧值: d_model=80, nhead=2, dim_ff=256, 2层（参考代码默认）
     simple_model = Classifier(
-        d_model=80, n_spks=speaker_num, dropout=0.1,
+        d_model=128, n_spks=speaker_num, dropout=0.1,
     )
 
     simple_model, simple_acc = train_model(
@@ -84,8 +85,10 @@ def main():
     print("[2/3] Medium 等级: 调参 Transformer + 自注意力池化")
     print("=" * 60)
 
+    # 改进: d_model 80→256, dim_ff 512→1024
+    # 旧值: d_model=80, dim_ff=512, 4层, nhead=4
     medium_model = ClassifierV2(
-        d_model=80, n_spks=speaker_num, dropout=0.1,
+        d_model=256, n_spks=speaker_num, dropout=0.15,
     )
 
     medium_model, medium_acc = train_model(
@@ -107,9 +110,11 @@ def main():
     print("[3/3] Hard 等级: Conformer")
     print("=" * 60)
 
+    # 改进: d_model 80→256, dim_ff 512→1024, num_blocks 4→6
+    # 旧值: d_model=80, dim_ff=512, num_blocks=4, nhead=4
     hard_model = ConformerClassifier(
-        d_model=80, n_spks=speaker_num, num_blocks=4,
-        nhead=4, dim_ff=512, dropout=0.1,
+        d_model=256, n_spks=speaker_num, num_blocks=6,
+        nhead=8, dim_ff=1024, dropout=0.15,
     )
 
     hard_model, hard_acc = train_model(
